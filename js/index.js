@@ -1,6 +1,7 @@
 const datosGuardados = {};
 
 // Cambios en el evento change del input 'nombre'
+
 document.getElementById('nombre').addEventListener('change', function () {
     const nombreInput = document.getElementById('nombre');
     const nombreInvitadoInput = document.getElementById('nombreInvitado');
@@ -207,14 +208,14 @@ function mostrarDatosGuardados() {
 // Al hacer clic en "mandar guarap" se abre un modal en el que se elige la sucursal a donde enviar el mensaje
 
 function enviarWhatsapp(numero) {
-    let mensaje = "las ordenes y precio son\n\n";
+    let mensaje = "las ordenes y precio son:\n\n";
 
     for (const nombre in datosGuardados) {
         mensaje += `Borrachin: ${nombre}\n`;
         mensaje += "Ordenes:\n";
 
         datosGuardados[nombre].forEach(orden => {
-            mensaje += `${orden.orden} - Precio: $${orden.precio}\n`;
+            mensaje += `${orden.orden} - $${orden.precio}\n`;
         });
 
         const precioTotal = calcularPrecioTotalGeneral();
@@ -257,12 +258,24 @@ document.getElementById("closeNumerosModalButton").addEventListener("click", fun
 
 document.getElementById("seleccionarNumeroButton").addEventListener("click", function () {
     const selectedNumero = document.querySelector('input[name="numero"]:checked');
+    let numero;
+
     if (selectedNumero) {
-        const numero = selectedNumero.value;
+        numero = selectedNumero.value;
+    } else {
+        // Obtener el input del número
+        const inputNumero = document.getElementById('inputNumero');
+        if (inputNumero && inputNumero.value.trim() !== '') {
+            numero = inputNumero.value.trim();
+        }
+    }
+
+    if (numero) {
         enviarWhatsapp(numero);
+
         const numerosModal = document.getElementById('numerosModal');
         numerosModal.classList.add('hidden');
     } else {
-        alert('Por favor, seleccioná a quien mandarle los precios');
+        alert('Por favor, seleccioná a quien mandarle los precios o ingresa un número');
     }
 });

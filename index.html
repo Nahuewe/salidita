@@ -27,7 +27,7 @@
 
     <div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg grid gap-4">
         <div class="col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col">
-            <!-- Nombre y precio-->
+            <!-- Nombre, orden y precio -->
             <label class="text-lg font-bold text-gray-700 mb-2">Nombre:</label>
             <select id="nombre"
                 class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4">
@@ -60,6 +60,7 @@
         </div>
 
         <div class="col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col">
+            <label class="text-lg font-bold text-gray-700 mb-2">ㅤ</label>
             <button id="btnAgregar"
                 class="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 focus:outline-none mb-4">
                 Agregar
@@ -71,7 +72,7 @@
         <div class="col-span-1 sm:col-span-2 lg:col-span-3">
             <button id="enviarWhatsapp"
                 class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Mandar guarap
+                Mandar la cuenta
             </button>
         </div>
 
@@ -86,6 +87,12 @@
                         <input type="radio" name="numero" value="+5493834523702">
                         <span>El Admin <u>(Nahuel)</u></span>
                     </label>
+                    <!-- Nuevo input para el número -->
+                    <div class="flex flex-col gap-2">
+                        <label for="inputNumero">Ingresar otro número:</label>
+                        <input type="text" id="inputNumero" placeholder="Ej. +549XXXXXXXXX"
+                            class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
+                    </div>
                 </div>
                 <div class="flex justify-end mt-6">
                     <button id="seleccionarNumeroButton"
@@ -114,10 +121,10 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="resultado"
-            class="container mx-auto mt-6 p-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        </div>
+    <div id="resultado"
+        class="container mx-auto mt-6 p-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
     </div>
 
     <script src="./js/index.js"></script>
