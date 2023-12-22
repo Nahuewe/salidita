@@ -276,6 +276,6 @@ document.getElementById("seleccionarNumeroButton").addEventListener("click", fun
         const numerosModal = document.getElementById('numerosModal');
         numerosModal.classList.add('hidden');
     } else {
-        alert('Por favor, seleccioná a quien mandarle los precios o ingresa un número');
+        alert('Seleccioná a quien mandarle los precios o ingresa un número');
     }
 });
