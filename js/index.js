@@ -11,12 +11,28 @@ document.getElementById('nombre').addEventListener('change', function () {
         nombreInput.classList.add('hidden');
         nombreInvitadoInput.classList.remove('hidden');
         nombreInvitadoInput.focus(); // Hacer focus en el nuevo input
+
+        // Agregar el nombre ingresado al select como opción
+        const nuevoNombre = nombreInvitadoInput.value.trim();
+        if (nuevoNombre) {
+            if (!datosGuardados[nuevoNombre]) {
+                datosGuardados[nuevoNombre] = [];
+            }
+
+            const select = document.getElementById('nombre');
+            const option = document.createElement('option');
+            option.value = nuevoNombre;
+            option.text = nuevoNombre;
+            select.appendChild(option);
+            select.value = nuevoNombre; // Establecer el nuevo nombre como el valor seleccionado
+        }
     } else {
         // Mostrar el select y ocultar el input para el nombre del invitado
         nombreInput.classList.remove('hidden');
         nombreInvitadoInput.classList.add('hidden');
     }
 });
+
 
 // Expresion regular hecha para que no se puedan ingresar numeros u caracteres especiales en los input
 
@@ -25,27 +41,26 @@ function validarTexto() {
     input.value = input.value.replace(/[^A-Za-z]/g, ''); // Solo permite letras, elimina todo lo que no sea una letra
 }
 
+// Cambios en el evento change del input 'nombre'
+
+document.getElementById('nombre').addEventListener('input', function () {
+    const nombreInput = document.getElementById('nombre');
+
+    if (nombreInput.value.trim() === 'Invitado') {
+        // Mostrar el input para el nombre del invitado
+        nombreInput.value = ''; // Limpiar el valor para que no quede 'Invitado' como opción
+        nombreInput.placeholder = 'Nombre del invitado';
+    } else {
+        nombreInput.placeholder = 'Nombre del borrachin';
+    }
+});
+
 // Agregar el borrachin y el precio de todo
 
 document.getElementById('btnAgregar').addEventListener('click', function () {
-    let nombre = document.getElementById('nombre').value;
-    const orden = document.getElementById('orden').value; // Cambiar esta línea
-    const precio = parseInt(document.getElementById('precio').value);
-    const nombreInput = document.getElementById('nombre');
-    const nombreInvitadoInput = document.getElementById('nombreInvitado');
-
-    if (nombreInput.value === 'Invitado') {
-        // Si se selecciona "Invitado", usar el valor del nuevo input
-        nombre = nombreInvitadoInput.value.trim();
-
-        // Restaurar el select como opción predeterminada después de haber utilizado "Invitado"
-        nombreInput.classList.remove('hidden');
-        nombreInvitadoInput.classList.add('hidden');
-        nombreInput.value = ''; // Limpiar el valor de Invitado para que el select aparezca vacío
-    } else {
-        // Si se selecciona otra opción, usar el valor del select original
-        nombre = nombreInput.value;
-    }
+    let nombre = document.getElementById('nombre').value.trim();
+    const orden = document.getElementById('orden').value.trim();
+    const precio = parseInt(document.getElementById('precio').value.trim());
 
     if (nombre && orden && !isNaN(precio) && precio > 0) {
         if (!datosGuardados[nombre]) {
@@ -66,7 +81,6 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
             });
         }
 
-        nombreInput.classList.remove('hidden');
         mostrarDatosGuardados();
 
         // Hace scroll en vista mobile hacia las cards creadas
@@ -79,9 +93,10 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
             }
         }
     } else {
-        alert('Te faltó rellenar los campos');
+        alert('Che wachin, te faltó rellenar los campos correctamente');
     }
 });
+
 
 // Elimina la orden completa
 

@@ -29,26 +29,14 @@
         <div class="col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col">
             <!-- Nombre, orden y precio -->
             <label class="text-lg font-bold text-gray-700 mb-2">Nombre:</label>
-            <select id="nombre"
-                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4">
-                <option value="" hidden selected>Borrachin</option>
-                <option value="Agustín">Agustín</option>
-                <option value="Diego">Diego</option>
-                <option value="Esteban">Esteban</option>
-                <option value="Gabi">Gabi</option>
-                <option value="Juan">Juan</option>
-                <option value="Lautaro">Lautaro</option>
-                <option value="Maxi">Maxi</option>
-                <option value="Nahuel">Nahuel</option>
-                <option value="Invitado" class="font-semibold">Invitado</option>
-            </select>
+            <input type="text" id="nombre" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4">            
 
             <!-- Nuevo input para el nombre del invitado -->
             <input type="text" id="nombreInvitado" oninput="validarTexto()"
                 class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4 capitalize hidden"
                 placeholder="Borrachin segundero">
 
-            <label class="text-lg font-bold text-gray-700 mb-2">Orden:</label>
+            <label class="text-lg font-bold text-gray-700 mb-2">Pedido:</label>
             <input id="orden"
                 class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4"
                 type="text">
@@ -85,12 +73,12 @@
                 <div id="numerosModalContent" class="flex flex-col gap-4">
                     <label class="flex items-center gap-2">
                         <input type="radio" name="numero" value="+5493834523702">
-                        <span>El Admin <u>(Nahuel)</u></span>
+                        <span>El Admin (Nahuel)</span>
                     </label>
                     <!-- Nuevo input para el número -->
                     <div class="flex flex-col gap-2">
                         <label for="inputNumero">Otro adulto responsable:</label>
-                        <input type="number" id="inputNumero"
+                        <input type="number" id="inputNumero" placeholder="ej: 3834523702"
                             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     </div>
                 </div>
