@@ -1,126 +1,301 @@
-const nombreInput = document.getElementById('nombre');
-const ordenInput = document.getElementById('orden');
-const precioInput = document.getElementById('precio');
-const btnAgregar = document.getElementById('btnAgregar');
-const resultadoDiv = document.getElementById('resultado');
-const enviarWhatsappBtn = document.getElementById('enviarWhatsapp');
+const datosGuardados = {};
 
-const numerosModal = document.getElementById('numerosModal');
-const seleccionarNumeroButton = document.getElementById('seleccionarNumeroButton');
-const closeNumerosModalButton = document.getElementById('closeNumerosModalButton');
-const inputNumero = document.getElementById('inputNumero');
+// Cambios en el evento change del input 'nombre'
 
-const eliminarModal = document.getElementById('eliminarModal');
-const eliminarModalContent = document.getElementById('eliminarModalContent');
-const confirmarEliminarButton = document.getElementById('confirmarEliminarButton');
-const cancelarEliminarButton = document.getElementById('cancelarEliminarButton');
+document.getElementById('nombre').addEventListener('change', function () {
+    const nombreInput = document.getElementById('nombre');
+    const nombreInvitadoInput = document.getElementById('nombreInvitado');
 
-let pedidos = [];
-let idAEliminar = null;
+    if (nombreInput.value === 'Invitado') {
+        // Mostrar el input para el nombre del invitado y ocultar el select
+        nombreInput.classList.add('hidden');
+        nombreInvitadoInput.classList.remove('hidden');
+        nombreInvitadoInput.focus(); // Hacer focus en el nuevo input
 
-btnAgregar.addEventListener('click', () => {
-    const nombre = nombreInput.value.trim();
-    const orden = ordenInput.value.trim();
-    const precio = parseFloat(precioInput.value.trim());
+        // Agregar el nombre ingresado al select como opción
+        const nuevoNombre = nombreInvitadoInput.value.trim();
+        if (nuevoNombre) {
+            if (!datosGuardados[nuevoNombre]) {
+                datosGuardados[nuevoNombre] = [];
+            }
 
-    if (!nombre || !orden || isNaN(precio)) {
-        alert('Completá todos los campos wachín');
-        return;
+            const select = document.getElementById('nombre');
+            const option = document.createElement('option');
+            option.value = nuevoNombre;
+            option.text = nuevoNombre;
+            select.appendChild(option);
+            select.value = nuevoNombre; // Establecer el nuevo nombre como el valor seleccionado
+        }
+    } else {
+        // Mostrar el select y ocultar el input para el nombre del invitado
+        nombreInput.classList.remove('hidden');
+        nombreInvitadoInput.classList.add('hidden');
     }
+});
 
-    const nuevoPedido = {
-        id: Date.now(),
-        nombre,
-        orden,
-        precio
+
+// Expresion regular hecha para que no se puedan ingresar numeros u caracteres especiales en los input
+
+function validarTexto() {
+    const input = document.getElementById('nombreInvitado');
+    input.value = input.value.replace(/[^A-Za-z]/g, ''); // Solo permite letras, elimina todo lo que no sea una letra
+}
+
+// Cambios en el evento change del input 'nombre'
+
+document.getElementById('nombre').addEventListener('input', function () {
+    const nombreInput = document.getElementById('nombre');
+
+    if (nombreInput.value.trim() === 'Invitado') {
+        // Mostrar el input para el nombre del invitado
+        nombreInput.value = ''; // Limpiar el valor para que no quede 'Invitado' como opción
+        nombreInput.placeholder = 'Nombre del invitado';
+    } else {
+        nombreInput.placeholder = 'Nombre del borrachin';
+    }
+});
+
+// Agregar el borrachin y el precio de todo
+
+document.getElementById('btnAgregar').addEventListener('click', function () {
+    let nombre = document.getElementById('nombre').value.trim();
+    const orden = document.getElementById('orden').value.trim();
+    const precio = parseInt(document.getElementById('precio').value.trim());
+
+    if (nombre && orden && !isNaN(precio) && precio > 0) {
+        if (!datosGuardados[nombre]) {
+            datosGuardados[nombre] = [];
+        }
+
+        // Verificar si ya existe la misma orden para el usuario
+        const ordenExistente = datosGuardados[nombre].find(item => item.orden === orden);
+
+        if (ordenExistente) {
+            // Si existe, sumar el precio
+            ordenExistente.precio += precio;
+        } else {
+            // Si no existe, agregar una nueva entrada
+            datosGuardados[nombre].push({
+                orden: orden,
+                precio: precio
+            });
+        }
+
+        mostrarDatosGuardados();
+
+        // Hace scroll en vista mobile hacia las cards creadas
+        const mediaQuery = window.matchMedia('(max-width: 640px)');
+        if (mediaQuery.matches) {
+            const resultadoDiv = document.getElementById('resultado');
+            const lastCard = resultadoDiv.lastElementChild;
+            if (lastCard) {
+                lastCard.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+            }
+        }
+    } else {
+        alert('Che wachin, te faltó rellenar los campos correctamente');
+    }
+});
+
+
+// Elimina la orden completa
+
+function eliminarOrden(nombre, indice) {
+    const eliminarModal = document.getElementById('eliminarModal');
+    const eliminarModalContent = document.getElementById('eliminarModalContent');
+
+    eliminarModalContent.textContent = `¿Te confundiste de precio?`;
+    eliminarModal.classList.remove('hidden');
+
+    const confirmarEliminarButton = document.getElementById('confirmarEliminarButton');
+    const cancelarEliminarButton = document.getElementById('cancelarEliminarButton');
+
+    confirmarEliminarButton.onclick = function () {
+        datosGuardados[nombre].splice(indice, 1);
+        mostrarDatosGuardados();
+        eliminarModal.classList.add('hidden');
     };
 
-    pedidos.push(nuevoPedido);
-    renderPedidos();
-
-    nombreInput.value = '';
-    ordenInput.value = '';
-    precioInput.value = '';
-});
-
-function renderPedidos() {
-    resultadoDiv.innerHTML = '';
-    pedidos.forEach(pedido => {
-        const div = document.createElement('div');
-        div.classList = 'bg-gray-100 p-4 rounded shadow flex flex-col gap-2 relative';
-
-        const eliminarBtn = document.createElement('button');
-        eliminarBtn.innerText = 'X';
-        eliminarBtn.className = 'absolute top-1 right-2 text-red-600 font-bold';
-        eliminarBtn.addEventListener('click', () => mostrarModalEliminar(pedido.id));
-
-        div.innerHTML = `
-            <p><strong>${pedido.nombre}</strong></p>
-            <p>🍽️ ${pedido.orden}</p>
-            <p>💰 $${pedido.precio.toFixed(2)}</p>
-        `;
-
-        div.appendChild(eliminarBtn);
-        resultadoDiv.appendChild(div);
-    });
+    cancelarEliminarButton.onclick = function () {
+        eliminarModal.classList.add('hidden');
+    };
 }
 
-function mostrarModalEliminar(id) {
-    idAEliminar = id;
-    const pedido = pedidos.find(p => p.id === id);
-    eliminarModalContent.textContent = `¿Seguro querés eliminar a ${pedido.nombre}?`;
+// Función que elimina al borrachin
+
+function eliminarTarjeta(nombre) {
+    const eliminarModal = document.getElementById('eliminarModal');
+    const eliminarModalContent = document.getElementById('eliminarModalContent');
+
+    eliminarModalContent.textContent = `¿${nombre} se equivoco de chupi?`;
     eliminarModal.classList.remove('hidden');
+
+    const confirmarEliminarButton = document.getElementById('confirmarEliminarButton');
+    const cancelarEliminarButton = document.getElementById('cancelarEliminarButton');
+
+    confirmarEliminarButton.onclick = function () {
+        delete datosGuardados[nombre];
+        mostrarDatosGuardados();
+        eliminarModal.classList.add('hidden');
+    };
+
+    cancelarEliminarButton.onclick = function () {
+        eliminarModal.classList.add('hidden');
+    };
 }
 
-confirmarEliminarButton.addEventListener('click', () => {
-    pedidos = pedidos.filter(p => p.id !== idAEliminar);
-    eliminarModal.classList.add('hidden');
-    renderPedidos();
-});
+// Calcular el precio total de la orden
 
-cancelarEliminarButton.addEventListener('click', () => {
-    eliminarModal.classList.add('hidden');
-});
+function calcularPrecioTotal(nombre, resultadoCalculoDiv) {
+    const ordenes = datosGuardados[nombre];
 
-enviarWhatsappBtn.addEventListener('click', () => {
-    if (pedidos.length === 0) {
-        alert('Agregá al menos un wachín antes de mandar la cuenta.');
-        return;
+    if (ordenes && ordenes.length > 0) {
+        let precioTotal = 0;
+
+        ordenes.forEach(orden => {
+            if (!isNaN(orden.precio) && orden.precio > 0) {
+                precioTotal += orden.precio;
+            }
+        });
+
+        resultadoCalculoDiv.innerText = `Total: $${precioTotal}`;
+    } else {
+        resultadoCalculoDiv.innerText = 'No hay órdenes para calcular el precio';
     }
+}
+
+// Funcion para crear las cards
+
+function mostrarDatosGuardados() {
+    const resultadoDiv = document.getElementById('resultado');
+    resultadoDiv.innerHTML = '';
+
+    for (const nombre in datosGuardados) {
+        const ordenes = datosGuardados[nombre];
+        const tarjetaDiv = document.createElement('div');
+        tarjetaDiv.className = 'bg-white p-4 rounded-lg shadow-md flex flex-col';
+
+        const tituloDiv = document.createElement('div');
+        tituloDiv.innerHTML = `<h2 class="text-xl font-bold mb-2 capitalize">${nombre}</h2>`;
+        tarjetaDiv.appendChild(tituloDiv);
+
+        const resultadoCalculoDiv = document.createElement('div');
+        resultadoCalculoDiv.className = 'mt-4 text-lg font-bold text-gray-700';
+        tarjetaDiv.appendChild(resultadoCalculoDiv);
+
+        ordenes.forEach((orden, index) => {
+            const ordenDiv = document.createElement('div');
+            ordenDiv.className = 'mb-2';
+            ordenDiv.innerHTML = `
+                <p class="text-gray-700">Orden: <span class="font-bold">${orden.orden}</span></p>
+                <p class="text-gray-700">Precio: <span class="font-bold">$${orden.precio}</span></p>
+            `;
+
+            const botonEliminarOrden = document.createElement('button');
+            botonEliminarOrden.className = 'bg-red-500 text-white px-2 rounded hover:bg-red-700 focus:outline-none';
+            botonEliminarOrden.textContent = 'Eliminar orden';
+            botonEliminarOrden.onclick = function () {
+                eliminarOrden(nombre, index);
+            };
+
+            ordenDiv.appendChild(botonEliminarOrden);
+            tarjetaDiv.appendChild(ordenDiv);
+        });
+
+        // Botones "Eliminar" y "Calcular" por tarjeta
+        const botonesDiv = document.createElement('div');
+        botonesDiv.className = 'flex items-center mt-2';
+
+        const botonEliminar = document.createElement('button');
+        botonEliminar.className = 'bg-red-500 text-white px-4 py-2 w-full rounded hover:bg-red-700 focus:outline-none ml-2';
+        botonEliminar.innerText = 'Eliminar';
+        botonEliminar.onclick = function () {
+            eliminarTarjeta(nombre);
+        };
+        botonesDiv.appendChild(botonEliminar);
+
+        tarjetaDiv.appendChild(botonesDiv);
+        resultadoDiv.appendChild(tarjetaDiv);
+        calcularPrecioTotal(nombre, resultadoCalculoDiv);
+    }
+}
+
+// Al hacer clic en "mandar guarap" se abre un modal en el que se elige la sucursal a donde enviar el mensaje
+
+function enviarWhatsapp(numero) {
+    let mensaje = " *Resumen de Pedidos* \n\n";
+
+    for (const nombre in datosGuardados) {
+        mensaje += ` *${nombre}*\n`;
+        mensaje += " Órdenes:\n";
+
+        let precioTotalPorPersona = 0;
+
+        datosGuardados[nombre].forEach(orden => {
+            mensaje += `• ${orden.orden} - $${orden.precio}\n`;
+            precioTotalPorPersona += orden.precio;
+        });
+
+        mensaje += ` *Total de ${nombre}:* $${precioTotalPorPersona}\n\n`;
+    }
+
+    const totalGeneral = calcularPrecioTotalGeneral();
+    mensaje += ` *Total General:* $${totalGeneral}`;
+
+    const url = "https://api.whatsapp.com/send?phone=" + numero + "&text=" + encodeURIComponent(mensaje);
+    window.open(url, "_blank");
+}
+
+function calcularPrecioTotalGeneral() {
+    let precioTotalGeneral = 0;
+
+    for (const nombre in datosGuardados) {
+        datosGuardados[nombre].forEach(orden => {
+            if (!isNaN(orden.precio) && orden.precio > 0) {
+                precioTotalGeneral += orden.precio;
+            }
+        });
+    }
+
+    return precioTotalGeneral;
+}
+
+// Abre el modal
+
+document.getElementById("enviarWhatsapp").addEventListener("click", function () {
+    const numerosModal = document.getElementById('numerosModal');
     numerosModal.classList.remove('hidden');
 });
 
-closeNumerosModalButton.addEventListener('click', () => {
+// Cierra el modal
+
+document.getElementById("closeNumerosModalButton").addEventListener("click", function () {
+    const numerosModal = document.getElementById('numerosModal');
     numerosModal.classList.add('hidden');
 });
 
-seleccionarNumeroButton.addEventListener('click', () => {
-    let numeroSeleccionado = document.querySelector('input[name="numero"]:checked');
-    let numero = numeroSeleccionado ? numeroSeleccionado.value : '';
+// Elegis la sucursal a donde queres enviar el mensaje
 
-    if (!numero && inputNumero.value.trim()) {
-        numero = `+549${inputNumero.value.trim()}`;
+document.getElementById("seleccionarNumeroButton").addEventListener("click", function () {
+    const selectedNumero = document.querySelector('input[name="numero"]:checked');
+    let numero;
+
+    if (selectedNumero) {
+        numero = selectedNumero.value;
+    } else {
+        // Obtener el input del número
+        const inputNumero = document.getElementById('inputNumero');
+        if (inputNumero && inputNumero.value.trim() !== '') {
+            numero = inputNumero.value.trim();
+        }
     }
 
-    if (!numero) {
-        alert('Seleccioná un número o ingresá uno nuevo.');
-        return;
-    }
+    if (numero) {
+        enviarWhatsapp(numero);
 
-    const mensaje = generarMensajeWhatsApp();
-    const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-    window.open(link, '_blank');
+        const numerosModal = document.getElementById('numerosModal');
+        numerosModal.classList.add('hidden');
+    } else {
+        alert('Seleccioná a quien mandarle los precios o ingresa un número');
+    }
 });
-
-function generarMensajeWhatsApp() {
-    let mensaje = '💸 *La cuenta papá* 💸\n\n';
-
-    pedidos.forEach(p => {
-        mensaje += `👤 *${p.nombre}*\n🍔 ${p.orden}\n💵 Total: $${p.precio.toFixed(2)}\n\n`;
-    });
-
-    const total = pedidos.reduce((sum, p) => sum + p.precio, 0);
-    mensaje += `🔢 Total general: $${total.toFixed(2)}`;
-
-    return mensaje;
-}
