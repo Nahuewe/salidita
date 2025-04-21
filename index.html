@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Munirrachos</title>
+    <title>Salidita</title>
     <!-- TailwindCSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
     <!-- Favicon -->
@@ -26,28 +26,23 @@
 
 
     <div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg grid gap-4">
-        <div class="col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col">
-            <!-- Nombre, orden y precio -->
-            <label class="text-lg font-bold text-gray-700 mb-2">Nombre:</label>
-            <input type="text" id="nombre" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4">            
+        <div class="col-span-1 md:col-span-2 flex flex-col">
 
-            <!-- Nuevo input para el nombre del invitado -->
-            <input type="text" id="nombreInvitado" oninput="validarTexto()"
-                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4 capitalize hidden"
-                placeholder="Borrachin segundero">
+            <label class="text-lg font-bold text-gray-700 mb-2">Nombre:</label>
+            <input type="text" id="nombre" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4 capitalize">
 
             <label class="text-lg font-bold text-gray-700 mb-2">Pedido:</label>
             <input id="orden"
-                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4"
+                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4 capitalize"
                 type="text">
 
             <label class="text-lg font-bold text-gray-700 mb-2">Precio:</label>
             <input id="precio"
-                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500 mb-4"
-                type="number">
+                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                type="text" oninput="soloNumeros(event)">
         </div>
 
-        <div class="col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col">
+        <div class="col-span-1 md:col-span-2 flex flex-col">
             <label class="text-lg font-bold text-gray-700 mb-2">ㅤ</label>
             <button id="btnAgregar"
                 class="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 focus:outline-none mb-4">
@@ -57,7 +52,7 @@
 
         <!-- Mandar Whatsapp -->
 
-        <div class="col-span-1 sm:col-span-2 lg:col-span-3">
+        <div class="col-span-1 md:col-span-2">
             <button id="enviarWhatsapp"
                 class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Mandar la cuenta
@@ -71,22 +66,17 @@
             <div class="bg-white rounded-lg p-8 w-96">
                 <h2 class="text-xl font-bold mb-4">El wachin que hace numeros</h2>
                 <div id="numerosModalContent" class="flex flex-col gap-4">
-                    <label class="flex items-center gap-2">
-                        <input type="radio" name="numero" value="+5493834523702">
-                        <span>El Admin (Nahuel)</span>
-                    </label>
-                    <!-- Nuevo input para el número -->
                     <div class="flex flex-col gap-2">
-                        <label for="inputNumero">Otro adulto responsable:</label>
-                        <input type="number" id="inputNumero" placeholder="ej: 3834523702"
+                        <label for="inputNumero">Teléfono de un adulto responsable:</label>
+                        <input type="text" oninput="soloNumeros(event)" id="inputNumero" placeholder="ej: 3834523702"
                             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:border-blue-500">
                     </div>
                 </div>
                 <div class="flex justify-end mt-6">
-                    <button id="seleccionarNumeroButton"
-                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none">Enviar</button>
                     <button id="closeNumerosModalButton"
-                        class="ml-4 bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 focus:outline-none">Cancelar</button>
+                        class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 focus:outline-none">Cancelar</button>
+                    <button id="seleccionarNumeroButton"
+                        class="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none">Mandale Mecha</button>
                 </div>
             </div>
         </div>

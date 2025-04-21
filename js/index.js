@@ -1,18 +1,18 @@
 const datosGuardados = {};
 
-// Cambios en el evento change del input 'nombre'
+function capitalizarTexto(texto) {
+    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+}
 
 document.getElementById('nombre').addEventListener('change', function () {
     const nombreInput = document.getElementById('nombre');
     const nombreInvitadoInput = document.getElementById('nombreInvitado');
 
     if (nombreInput.value === 'Invitado') {
-        // Mostrar el input para el nombre del invitado y ocultar el select
         nombreInput.classList.add('hidden');
         nombreInvitadoInput.classList.remove('hidden');
-        nombreInvitadoInput.focus(); // Hacer focus en el nuevo input
+        nombreInvitadoInput.focus();
 
-        // Agregar el nombre ingresado al select como opción
         const nuevoNombre = nombreInvitadoInput.value.trim();
         if (nuevoNombre) {
             if (!datosGuardados[nuevoNombre]) {
@@ -24,31 +24,29 @@ document.getElementById('nombre').addEventListener('change', function () {
             option.value = nuevoNombre;
             option.text = nuevoNombre;
             select.appendChild(option);
-            select.value = nuevoNombre; // Establecer el nuevo nombre como el valor seleccionado
+            select.value = nuevoNombre;
         }
     } else {
-        // Mostrar el select y ocultar el input para el nombre del invitado
         nombreInput.classList.remove('hidden');
         nombreInvitadoInput.classList.add('hidden');
     }
 });
 
-
-// Expresion regular hecha para que no se puedan ingresar numeros u caracteres especiales en los input
-
 function validarTexto() {
     const input = document.getElementById('nombreInvitado');
-    input.value = input.value.replace(/[^A-Za-z]/g, ''); // Solo permite letras, elimina todo lo que no sea una letra
+    input.value = input.value.replace(/[^A-Za-z]/g, '');
 }
 
-// Cambios en el evento change del input 'nombre'
+function soloNumeros(event) {
+    const input = event.target;
+    input.value = input.value.replace(/[^0-9]/g, '');
+}
 
 document.getElementById('nombre').addEventListener('input', function () {
     const nombreInput = document.getElementById('nombre');
 
     if (nombreInput.value.trim() === 'Invitado') {
-        // Mostrar el input para el nombre del invitado
-        nombreInput.value = ''; // Limpiar el valor para que no quede 'Invitado' como opción
+        nombreInput.value = '';
         nombreInput.placeholder = 'Nombre del invitado';
     } else {
         nombreInput.placeholder = 'Nombre del borrachin';
@@ -67,14 +65,11 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
             datosGuardados[nombre] = [];
         }
 
-        // Verificar si ya existe la misma orden para el usuario
         const ordenExistente = datosGuardados[nombre].find(item => item.orden === orden);
 
         if (ordenExistente) {
-            // Si existe, sumar el precio
             ordenExistente.precio += precio;
         } else {
-            // Si no existe, agregar una nueva entrada
             datosGuardados[nombre].push({
                 orden: orden,
                 precio: precio
@@ -83,7 +78,6 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
 
         mostrarDatosGuardados();
 
-        // Hace scroll en vista mobile hacia las cards creadas
         const mediaQuery = window.matchMedia('(max-width: 640px)');
         if (mediaQuery.matches) {
             const resultadoDiv = document.getElementById('resultado');
@@ -96,7 +90,6 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
         alert('Che wachin, te faltó rellenar los campos correctamente');
     }
 });
-
 
 // Elimina la orden completa
 
@@ -127,7 +120,8 @@ function eliminarTarjeta(nombre) {
     const eliminarModal = document.getElementById('eliminarModal');
     const eliminarModalContent = document.getElementById('eliminarModalContent');
 
-    eliminarModalContent.textContent = `¿${nombre} se equivoco de chupi?`;
+    const nombreCapitalizado = nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
+    eliminarModalContent.textContent = `¿${nombreCapitalizado} se equivocó de chupi?`;
     eliminarModal.classList.remove('hidden');
 
     const confirmarEliminarButton = document.getElementById('confirmarEliminarButton');
@@ -180,19 +174,19 @@ function mostrarDatosGuardados() {
         tarjetaDiv.appendChild(tituloDiv);
 
         const resultadoCalculoDiv = document.createElement('div');
-        resultadoCalculoDiv.className = 'mt-4 text-lg font-bold text-gray-700';
+        resultadoCalculoDiv.className = 'mb-4 text-lg font-bold text-gray-700';
         tarjetaDiv.appendChild(resultadoCalculoDiv);
 
         ordenes.forEach((orden, index) => {
             const ordenDiv = document.createElement('div');
             ordenDiv.className = 'mb-2';
             ordenDiv.innerHTML = `
-                <p class="text-gray-700">Orden: <span class="font-bold">${orden.orden}</span></p>
+                <p class="text-gray-700">Orden: <span class="font-bold capitalize">${orden.orden}</span></p>
                 <p class="text-gray-700">Precio: <span class="font-bold">$${orden.precio}</span></p>
             `;
 
             const botonEliminarOrden = document.createElement('button');
-            botonEliminarOrden.className = 'bg-red-500 text-white px-2 rounded hover:bg-red-700 focus:outline-none';
+            botonEliminarOrden.className = 'bg-purple-500 text-white px-2 rounded hover:bg-purple-700 focus:outline-none';
             botonEliminarOrden.textContent = 'Eliminar orden';
             botonEliminarOrden.onclick = function () {
                 eliminarOrden(nombre, index);
@@ -202,12 +196,11 @@ function mostrarDatosGuardados() {
             tarjetaDiv.appendChild(ordenDiv);
         });
 
-        // Botones "Eliminar" y "Calcular" por tarjeta
         const botonesDiv = document.createElement('div');
         botonesDiv.className = 'flex items-center mt-2';
 
         const botonEliminar = document.createElement('button');
-        botonEliminar.className = 'bg-red-500 text-white px-4 py-2 w-full rounded hover:bg-red-700 focus:outline-none ml-2';
+        botonEliminar.className = 'bg-red-500 text-white px-4 py-2 w-full rounded hover:bg-red-700 focus:outline-none';
         botonEliminar.innerText = 'Eliminar';
         botonEliminar.onclick = function () {
             eliminarTarjeta(nombre);
@@ -220,27 +213,35 @@ function mostrarDatosGuardados() {
     }
 }
 
+function capitalize(str) {
+    return str
+        .toLowerCase()
+        .split(' ')
+        .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+        .join(' ');
+}
+
 // Al hacer clic en "mandar guarap" se abre un modal en el que se elige la sucursal a donde enviar el mensaje
 
 function enviarWhatsapp(numero) {
     let mensaje = " *Resumen de Pedidos* \n\n";
 
     for (const nombre in datosGuardados) {
-        mensaje += ` *${nombre}*\n`;
-        mensaje += " Órdenes:\n";
+        mensaje += `*${capitalizarTexto(nombre)}*\n`;
+        mensaje += "Órdenes:\n";
 
         let precioTotalPorPersona = 0;
 
         datosGuardados[nombre].forEach(orden => {
-            mensaje += `• ${orden.orden} - $${orden.precio}\n`;
+            mensaje += `• ${capitalizarTexto(orden.orden)} - $${orden.precio}\n`;
             precioTotalPorPersona += orden.precio;
         });
 
-        mensaje += ` *Total de ${nombre}:* $${precioTotalPorPersona}\n\n`;
+        mensaje += `*Total de ${capitalizarTexto(nombre)}:* $${precioTotalPorPersona}\n\n`;
     }
 
     const totalGeneral = calcularPrecioTotalGeneral();
-    mensaje += ` *Total General:* $${totalGeneral}`;
+    mensaje += `*Total General:* $${totalGeneral}`;
 
     const url = "https://api.whatsapp.com/send?phone=" + numero + "&text=" + encodeURIComponent(mensaje);
     window.open(url, "_blank");
@@ -274,7 +275,7 @@ document.getElementById("closeNumerosModalButton").addEventListener("click", fun
     numerosModal.classList.add('hidden');
 });
 
-// Elegis la sucursal a donde queres enviar el mensaje
+// Elegis la persona a la que queres enviar el mensaje
 
 document.getElementById("seleccionarNumeroButton").addEventListener("click", function () {
     const selectedNumero = document.querySelector('input[name="numero"]:checked');
@@ -283,7 +284,6 @@ document.getElementById("seleccionarNumeroButton").addEventListener("click", fun
     if (selectedNumero) {
         numero = selectedNumero.value;
     } else {
-        // Obtener el input del número
         const inputNumero = document.getElementById('inputNumero');
         if (inputNumero && inputNumero.value.trim() !== '') {
             numero = inputNumero.value.trim();
@@ -296,6 +296,6 @@ document.getElementById("seleccionarNumeroButton").addEventListener("click", fun
         const numerosModal = document.getElementById('numerosModal');
         numerosModal.classList.add('hidden');
     } else {
-        alert('Seleccioná a quien mandarle los precios o ingresa un número');
+        alert('Ingresa un número de teléfono valido');
     }
 });
