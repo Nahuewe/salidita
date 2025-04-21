@@ -59,6 +59,7 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
     let nombre = document.getElementById('nombre').value.trim();
     const orden = document.getElementById('orden').value.trim();
     const precio = parseInt(document.getElementById('precio').value.trim());
+    
 
     if (nombre && orden && !isNaN(precio) && precio > 0) {
         if (!datosGuardados[nombre]) {
@@ -87,7 +88,7 @@ document.getElementById('btnAgregar').addEventListener('click', function () {
             }
         }
     } else {
-        alert('Che wachin, te faltó rellenar los campos correctamente');
+        alert('Che wachin, te faltó completar todos los datos');
     }
 });
 
@@ -186,7 +187,7 @@ function mostrarDatosGuardados() {
             `;
 
             const botonEliminarOrden = document.createElement('button');
-            botonEliminarOrden.className = 'bg-purple-500 text-white px-2 rounded hover:bg-purple-700 focus:outline-none';
+            botonEliminarOrden.className = 'bg-red-400 text-white px-2 py-2 rounded hover:bg-red-600 focus:outline-none';
             botonEliminarOrden.textContent = 'Eliminar orden';
             botonEliminarOrden.onclick = function () {
                 eliminarOrden(nombre, index);
@@ -213,14 +214,6 @@ function mostrarDatosGuardados() {
     }
 }
 
-function capitalize(str) {
-    return str
-        .toLowerCase()
-        .split(' ')
-        .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
-        .join(' ');
-}
-
 // Al hacer clic en "mandar guarap" se abre un modal en el que se elige la sucursal a donde enviar el mensaje
 
 function enviarWhatsapp(numero) {
@@ -241,7 +234,15 @@ function enviarWhatsapp(numero) {
     }
 
     const totalGeneral = calcularPrecioTotalGeneral();
-    mensaje += `*Total General:* $${totalGeneral}`;
+    mensaje += `*Total General:* $${totalGeneral}\n\n`;
+
+    const hoy = new Date();
+    const fechaFormateada = hoy.toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+    mensaje += `_Enviado el ${fechaFormateada}_`;
 
     const url = "https://api.whatsapp.com/send?phone=" + numero + "&text=" + encodeURIComponent(mensaje);
     window.open(url, "_blank");
