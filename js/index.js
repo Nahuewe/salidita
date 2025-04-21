@@ -121,8 +121,7 @@ function eliminarTarjeta(nombre) {
     const eliminarModal = document.getElementById('eliminarModal');
     const eliminarModalContent = document.getElementById('eliminarModalContent');
 
-    const nombreCapitalizado = nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
-    eliminarModalContent.textContent = `¿${nombreCapitalizado} se equivocó de chupi?`;
+    eliminarModalContent.textContent = `¿${capitalizarTexto(nombre)} le pifio al pedido?`;
     eliminarModal.classList.remove('hidden');
 
     const confirmarEliminarButton = document.getElementById('confirmarEliminarButton');
